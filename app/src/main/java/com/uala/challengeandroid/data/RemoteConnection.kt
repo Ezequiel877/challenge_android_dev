@@ -12,7 +12,6 @@ object RemoteConnection {
         level = HttpLoggingInterceptor.Level.BODY
         OkHttpClient.Builder().addInterceptor(this).build()
     }
-//agregar base url a string src
     private val builder = Retrofit.Builder()
         .baseUrl("https://gist.githubusercontent.com/")
         .client(okHttpClient)

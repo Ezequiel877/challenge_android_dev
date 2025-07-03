@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uala.challengeandroid.data.CityRepository
 import com.uala.challengeandroid.model.City
+import com.uala.challengeandroid.utils.toDomainList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,7 +31,7 @@ class CityViewModel @Inject constructor(
     fun loadCities() {
         viewModelScope.launch {
             val result = repository.getCities()
-            _cities.value = result.sortedWith(compareBy({ it.name }, { it.country }))
+            _cities.value = result.toDomainList()
         }
     }
 
