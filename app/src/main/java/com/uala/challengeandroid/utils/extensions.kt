@@ -38,7 +38,6 @@ fun CityItem(city: City, onClick: (City) -> Unit = {}) {
             color = Color.Gray
         )
     }
-    Divider()
 }
 
 sealed class LoadState<out T> {

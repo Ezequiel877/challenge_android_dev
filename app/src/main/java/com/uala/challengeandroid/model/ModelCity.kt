@@ -18,6 +18,7 @@ data class Coord(
 @Entity(tableName = "cities")
 data class CityEntity(
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo("id")
     val id: Long,
     @ColumnInfo(name = "name")
     val name: String,
@@ -29,16 +30,16 @@ data class CityEntity(
     val lon: Double
 )
 fun CityEntity.toDomain(): City = City(
-    country = country,
-    name = name,
-    id = id,
-    coord = Coord(lon = lon, lat = lat)
+    country = this.country,
+    name = this.name,
+    id = this.id,
+    coord = Coord(lon = this.lon, lat = this.lat)
 )
 
 fun City.toEntity(): CityEntity = CityEntity(
-    id = id,
-    name = name,
-    country = country,
-    lat = coord.lat,
-    lon = coord.lon
+    id = this.id,
+    name = this.name,
+    country = this.country,
+    lat = this.coord.lat,
+    lon = this.coord.lon
 )

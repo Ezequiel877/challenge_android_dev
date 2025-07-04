@@ -1,6 +1,5 @@
 package com.uala.challengeandroid.data
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -11,7 +10,8 @@ import com.uala.challengeandroid.model.City
 import com.uala.challengeandroid.model.CityEntity
 
 interface CityRepository {
-        suspend fun getCities(): List<CityEntity>
+        suspend fun saveCities()
+        suspend fun getAllCities(): List<CityEntity>
 }
 
 @Dao
