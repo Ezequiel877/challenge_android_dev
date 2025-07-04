@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class CityViewModel @Inject constructor(
     private val repository: CityRepository
@@ -23,11 +22,22 @@ class CityViewModel @Inject constructor(
 
     private val _allCities = MutableStateFlow<List<City>>(emptyList())
     private val _searchQuery = MutableStateFlow("")
+    private val _favorites = MutableStateFlow<Set<Long>>(emptySet())
+
+    val favorites: StateFlow<Set<Long>> = _favorites
+    val query: StateFlow<String> = _searchQuery
+
     private val pageSize = 50
     private val generalPage = MutableStateFlow(0)
-    private var isLoadingGeneral = false
     private val searchPage = MutableStateFlow(0)
+
+    private var isLoadingGeneral = false
     private var isLoadingSearch = false
+
+    init {
+        loadCities()
+        refreshFavorites()
+    }
 
     fun loadCities() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -38,11 +48,25 @@ class CityViewModel @Inject constructor(
         }
     }
 
+    private fun refreshFavorites() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val favIds = repository.getFavorites().map { it.id }.toSet()
+            _favorites.value = favIds
+        }
+    }
+
+    fun toggleFavorite(city: City) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.toggleFavorite(city.id)
+            refreshFavorites()
+        }
+    }
+
     val pagedAllCities: StateFlow<List<City>> = combine(_allCities, generalPage) { list, page ->
         val to = minOf(list.size, (page + 1) * pageSize)
         list.take(to)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-    val query: StateFlow<String> = _searchQuery
+
     val pagedSearchCities: StateFlow<List<City>> = combine(_searchQuery, _allCities, searchPage) { query, list, page ->
         if (query.isBlank()) return@combine emptyList()
         val filtered = list.filter { it.name.startsWith(query, ignoreCase = true) }
@@ -89,9 +113,5 @@ class CityViewModel @Inject constructor(
         _searchQuery.value = newQuery
         searchPage.value = 0
     }
-
-//    fun resetPagination() {
-//        generalPage.value = 0
-//        searchPage.value = 0
-//    }
 }
+

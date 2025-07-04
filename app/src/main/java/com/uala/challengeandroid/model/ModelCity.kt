@@ -27,7 +27,9 @@ data class CityEntity(
     @ColumnInfo(name = "lat")
     val lat: Double,
     @ColumnInfo(name = "lon")
-    val lon: Double
+    val lon: Double,
+    @ColumnInfo("isFavorite")
+    val isFavorite: Boolean = false
 )
 fun CityEntity.toDomain(): City = City(
     country = this.country,

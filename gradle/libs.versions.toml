@@ -12,6 +12,9 @@ activityCompose = "1.10.1"
 composeBom = "2024.04.01"
 roomCompiler = "2.7.2"
 room = "2.6.1"
+navigation = "2.7.5"
+maps_compose = "2.11.4"
+play_services_maps = "18.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +40,9 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 hilt-android = { module = "com.google.dagger:hilt-android", version = "2.51" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version = "2.51" }
 androidx-paging-compose = {module= "androidx.paging:paging-compose", version="3.2.1" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "maps_compose" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "play_services_maps" }
 
 
 

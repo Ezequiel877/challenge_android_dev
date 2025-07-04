@@ -22,5 +22,11 @@ class CityRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllCities(): List<CityEntity> = room.getAll()
+    override suspend fun toggleFavorite(id: Long) {
+        val current = room.getAll().firstOrNull { it.id == id } ?: return
+        room.toggleFavorite(id, !current.isFavorite)
+    }
+
+    override suspend fun getFavorites(): List<CityEntity> = room.getFavorites()
 
 }

@@ -12,6 +12,8 @@ import com.uala.challengeandroid.model.CityEntity
 interface CityRepository {
         suspend fun saveCities()
         suspend fun getAllCities(): List<CityEntity>
+        suspend fun toggleFavorite(id: Long)
+        suspend fun getFavorites(): List<CityEntity>
 }
 
 @Dao
@@ -34,4 +36,10 @@ interface CityDao {
 
         @Query("SELECT * FROM cities WHERE id = :id")
         suspend fun getById(id: Long): CityEntity?
+        @Query("UPDATE cities SET isFavorite = :isFav WHERE id = :id")
+        suspend fun toggleFavorite(id: Long, isFav: Boolean)
+        @Query("SELECT * FROM cities WHERE isFavorite = 1")
+        suspend fun getFavorites(): List<CityEntity>
+
 }
+
