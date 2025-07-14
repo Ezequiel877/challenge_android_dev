@@ -8,7 +8,8 @@ data class City(
     val country: String,
     val name: String,
     val id: Long,
-    val coord: Coord
+    val coord: Coord,
+    val isFavorite: Boolean
 )
 
 data class Coord(
@@ -35,7 +36,8 @@ fun CityEntity.toDomain(): City = City(
     country = this.country,
     name = this.name,
     id = this.id,
-    coord = Coord(lon = this.lon, lat = this.lat)
+    coord = Coord(lon = this.lon, lat = this.lat),
+    isFavorite = this.isFavorite
 )
 
 fun City.toEntity(): CityEntity = CityEntity(

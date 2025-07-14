@@ -1,45 +1,24 @@
 package com.uala.challengeandroid.data
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
 import com.uala.challengeandroid.model.City
-import com.uala.challengeandroid.model.CityEntity
+import com.uala.challengeandroid.model.toEntity
+import com.uala.challengeandroid.utils.toDomainList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-interface CityRepository {
-        suspend fun saveCities()
-        suspend fun getAllCities(): List<CityEntity>
-        suspend fun toggleFavorite(id: Long)
-        suspend fun getFavorites(): List<CityEntity>
+open class CityRepository @Inject constructor(
+    val roomDataSource: CityDataLocal, private val remoteDataSource: CityDataRemote
+) {
+    val cities: Flow<List<City>>
+        get() = roomDataSource.cities.onEach { list ->
+            if (list.isEmpty()) {
+                val fetch = remoteDataSource.getAllCities()
+                roomDataSource.saveCities(fetch)
+            }
+        }
+
+    suspend fun getFavorite(): Flow<List<City>> = roomDataSource.getFavorite().map { it.toDomainList() }
+    suspend fun setFavorite(id: Long)= roomDataSource.toggleFavorite(id)
 }
-
-@Dao
-interface CityDao {
-
-        @Insert(onConflict = OnConflictStrategy.REPLACE)
-        suspend fun insertAll(cities: List<CityEntity>)
-
-        @Update
-        suspend fun update(city: CityEntity)
-
-        @Delete
-        suspend fun delete(city: CityEntity)
-
-        @Query("SELECT * FROM cities ORDER BY name")
-        fun getAll(): List<CityEntity>
-
-        @Query("SELECT * FROM cities WHERE name LIKE :query OR country LIKE :query ORDER BY name")
-        fun search(query: String): List<CityEntity>
-
-        @Query("SELECT * FROM cities WHERE id = :id")
-        suspend fun getById(id: Long): CityEntity?
-        @Query("UPDATE cities SET isFavorite = :isFav WHERE id = :id")
-        suspend fun toggleFavorite(id: Long, isFav: Boolean)
-        @Query("SELECT * FROM cities WHERE isFavorite = 1")
-        suspend fun getFavorites(): List<CityEntity>
-
-}
-

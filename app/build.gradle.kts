@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.uala.challengeandroid.HiltTestRunner"
     }
 
     buildTypes {
@@ -44,35 +44,74 @@ android {
         enableAggregatingTask = false
     }
 }
-
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    /* ────── Producción ───────────────────────────────────────────── */
+    implementation(libs.core.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.activity.compose)
+
+    // Compose BOM
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+
+    // DI
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    kapt(libs.hilt.compiler)
+
+    // Networking
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
+    // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.androidx.paging.compose)
     kapt(libs.room.compiler)
+
+    // Paging, Navigation, Maps
+    implementation(libs.paging.compose)
     implementation(libs.navigation.compose)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+
+    // Coroutines & Play-Services
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.play)
+    implementation(libs.play.services.location)
+
+    /* ────── Tests JVM (unit / Robolectric) ───────────────────────── */
+    testImplementation(kotlin("test"))
+    testImplementation(libs.junit4)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.room.testing)
-    kapt(libs.hilt.compiler)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.hilt.testing)
+    kaptTest(libs.hilt.compiler)
+
+    /* ────── Tests instrumentados ────────────────────────────────── */
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.junit.androidx)
+    androidTestImplementation(libs.hilt.testing)
+    kaptAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.mockito.android)
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+
+    /* ────── Builds debug (herramientas) ─────────────────────────── */
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.tool)   // ui-test-manifest
+
+    //TestRunner
+    androidTestImplementation(libs.hilt.testing)
+    kaptAndroidTest(libs.hilt.compiler)
 }

@@ -2,11 +2,14 @@ package com.uala.challengeandroid
 
 import android.content.Context
 import androidx.room.Room
+import com.uala.challengeandroid.data.CitiesRoomDataSource
 import com.uala.challengeandroid.data.CityApiService
 import com.uala.challengeandroid.data.CityDao
-import com.uala.challengeandroid.data.CityRepository
-import com.uala.challengeandroid.data.CityRepositoryImpl
+import com.uala.challengeandroid.data.CityDataLocal
+import com.uala.challengeandroid.data.CityDataRemote
+import com.uala.challengeandroid.data.CityRemoteDataSource
 import com.uala.challengeandroid.data.local.AppDatabase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,9 +33,7 @@ object AppModule {
             .create(CityApiService::class.java)
     }
 
-    @Singleton
-    @Provides
-    fun provideCityRepository(api: CityApiService, room:CityDao): CityRepository = CityRepositoryImpl(api, room)
+
 }
 @Module
 @InstallIn(SingletonComponent::class)
@@ -45,4 +46,16 @@ object DatabaseModule {
 
     @Provides
     fun provideCityDao(db: AppDatabase): CityDao = db.cityDao()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal abstract class FrameworkMovieModule {
+
+    @Binds
+    abstract fun bindLocalDataSource(localDataSource: CitiesRoomDataSource): CityDataLocal
+
+    @Binds
+    abstract fun bindRemoteDataSource(remoteDataSource: CityRemoteDataSource): CityDataRemote
+
 }

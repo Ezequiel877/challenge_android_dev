@@ -2,116 +2,81 @@ package com.uala.challengeandroid.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uala.challengeandroid.data.CityRepository
+import com.uala.challengeandroid.data.FetchCityUseCase
+import com.uala.challengeandroid.data.SetFavoriteUseCase
 import com.uala.challengeandroid.model.City
-import com.uala.challengeandroid.utils.toDomainList
+import com.uala.challengeandroid.utils.Result
+import com.uala.challengeandroid.utils.stateAsResultIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class CityViewModel @Inject constructor(
-    private val repository: CityRepository
+    private val repository: FetchCityUseCase, private val setFavoriteUseCase: SetFavoriteUseCase
 ) : ViewModel() {
-
-    private val _allCities = MutableStateFlow<List<City>>(emptyList())
     private val _searchQuery = MutableStateFlow("")
-    private val _favorites = MutableStateFlow<Set<Long>>(emptySet())
-
-    val favorites: StateFlow<Set<Long>> = _favorites
     val query: StateFlow<String> = _searchQuery
-
-    private val pageSize = 50
-    private val generalPage = MutableStateFlow(0)
-    private val searchPage = MutableStateFlow(0)
-
-    private var isLoadingGeneral = false
-    private var isLoadingSearch = false
-
-    init {
-        loadCities()
-        refreshFavorites()
+    private val uiReady = MutableStateFlow(false)
+    private val _onlyFavorites = MutableStateFlow(false)
+    val onlyFavorites: StateFlow<Boolean> = _onlyFavorites
+    fun setOnlyFavorites(value: Boolean) {
+        _onlyFavorites.value = value
     }
 
-    fun loadCities() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (repository.getAllCities().isEmpty()) {
-                repository.saveCities()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val list: StateFlow<Result<List<City>>> =
+        uiReady.filter { it }
+            .flatMapLatest { repository() }
+            .stateAsResultIn(viewModelScope)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val listFavorite: StateFlow<Result<List<City>>> =
+        uiReady.filter { it }
+            .flatMapLatest { setFavoriteUseCase.getAllFavorite() }
+            .stateAsResultIn(viewModelScope)
+
+    val state: StateFlow<Result<List<City>>> = combine(
+        _searchQuery, _onlyFavorites, list, listFavorite
+    ) { query, onlyFav, allResult, favResult ->
+        val resultToUse = if (onlyFav) favResult else allResult
+        when (resultToUse) {
+            is Result.Success -> {
+                val filtered = if (query.isBlank()) {
+                    resultToUse.data
+                } else {
+                    resultToUse.data.filter {
+                        it.name.startsWith(query, ignoreCase = true)
+                    }
+                }
+                Result.Success(filtered)
             }
-            _allCities.value = repository.getAllCities().toDomainList()
-        }
-    }
 
-    private fun refreshFavorites() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val favIds = repository.getFavorites().map { it.id }.toSet()
-            _favorites.value = favIds
+            is Result.Loading -> Result.Loading
+            is Result.Error -> resultToUse
         }
-    }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, Result.Loading)
 
     fun toggleFavorite(city: City) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.toggleFavorite(city.id)
-            refreshFavorites()
+            setFavoriteUseCase.setNewFavorite(city.id)
         }
     }
 
-    val pagedAllCities: StateFlow<List<City>> = combine(_allCities, generalPage) { list, page ->
-        val to = minOf(list.size, (page + 1) * pageSize)
-        list.take(to)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    val pagedSearchCities: StateFlow<List<City>> = combine(_searchQuery, _allCities, searchPage) { query, list, page ->
-        if (query.isBlank()) return@combine emptyList()
-        val filtered = list.filter { it.name.startsWith(query, ignoreCase = true) }
-        val to = minOf(filtered.size, (page + 1) * pageSize)
-        filtered.take(to)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    fun loadNextGeneralPage() {
-        if (isLoadingGeneral) return
-        isLoadingGeneral = true
-
-        val total = _allCities.value.size
-        val maxPage = if (total == 0) 0 else (total - 1) / pageSize
-
-        if (generalPage.value < maxPage) {
-            generalPage.value += 1
-        }
-
-        viewModelScope.launch {
-            delay(300)
-            isLoadingGeneral = false
-        }
-    }
-
-    fun loadNextSearchPage() {
-        if (isLoadingSearch) return
-        isLoadingSearch = true
-
-        val filtered = _allCities.value.filter { it.name.startsWith(_searchQuery.value, ignoreCase = true) }
-        val total = filtered.size
-        val maxPage = if (total == 0) 0 else (total - 1) / pageSize
-
-        if (searchPage.value < maxPage) {
-            searchPage.value += 1
-        }
-
-        viewModelScope.launch {
-            delay(300)
-            isLoadingSearch = false
-        }
+    fun onUiReady() {
+        uiReady.value = true
     }
 
     fun setQuery(newQuery: String) {
         _searchQuery.value = newQuery
-        searchPage.value = 0
     }
 }
-

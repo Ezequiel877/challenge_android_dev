@@ -7,7 +7,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 object RemoteConnection {
-
     private val okHttpClient = HttpLoggingInterceptor().run {
         level = HttpLoggingInterceptor.Level.BODY
         OkHttpClient.Builder().addInterceptor(this).build()
@@ -17,6 +16,5 @@ object RemoteConnection {
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     val service: CityApiService = builder.create()
 }

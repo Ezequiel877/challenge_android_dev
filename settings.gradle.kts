@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ChallengeAndroid"
 include(":app")
- 
+include(":testModule")

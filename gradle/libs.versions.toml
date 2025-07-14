@@ -1,55 +1,120 @@
+#######################
+#  Version catalog    #
+#######################
 [versions]
-agp = "8.7.2"
-kotlin = "2.0.0"
-coreKtx = "1.16.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-hilt = "2.56.2"
-hiltNavigationCompose = "1.2.0"
-lifecycleRuntimeKtx = "2.8.7"
+# Gradle & Kotlin
+agp      = "8.7.2"
+kotlin   = "2.0.0"
+
+# AndroidX / Compose
+coreKtx  = "1.16.0"
 activityCompose = "1.10.1"
+compose   = "1.6.5"
 composeBom = "2024.04.01"
-roomCompiler = "2.7.2"
-room = "2.6.1"
-navigation = "2.7.5"
-maps_compose = "2.11.4"
-play_services_maps = "18.2.0"
 
+# Lifecycle / Coroutines
+lifecycleRuntimeKtx = "2.8.7"
+coroutines = "1.8.1"
+
+# Navigation & Maps
+navigation         = "2.7.5"
+mapsCompose        = "2.11.4"
+playServicesMaps   = "18.2.0"
+playServicesLocation = "21.3.0"
+
+# Hilt
+hilt        = "2.56.2"
+hiltNav     = "1.2.0"          # FIX: versión correcta (no 2.56.2)
+
+# Room
+room = "2.7.2"                 # FIX: sube a 2.7.2 (compatible con Kotlin 2)
+
+# Turbine
+turbine = "1.1.0"
+
+# Testing libs
+junit4        = "4.13.2"
+junitExt      = "1.1.5"        # FIX: 1.2.1 no existe
+espresso      = "3.6.1"
+runner        = "1.6.2"
+mockito       = "4.0.0"
+mockitoKotlin = "5.2.1"
+
+# UI kit
+appcompat = "1.7.1"
+material  = "1.12.0"
+
+#######################
+#  Libraries          #
+#######################
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+
+# Core & UI base
+core-ktx   = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+appcompat  = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material   = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Turbine
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+
+# Compose
+activity-compose  = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+compose-bom       = { group = "androidx.compose",  name = "compose-bom",     version.ref = "composeBom" }
+compose-ui        = { group = "androidx.compose.ui", name = "ui",            version.ref = "compose" }
+compose-ui-graphics= { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-ui-tooling= { group = "androidx.compose.ui", name = "ui-tooling",    version.ref = "compose" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+# Compose testing (solo un alias cada uno) –––––––––––––––––––––––––––
+compose-ui-test   = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose" }
+compose-ui-tool   = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose" }
+
+# Lifecycle / Coroutines
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+coroutines-core    = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core",            version.ref = "coroutines" }
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android",         version.ref = "coroutines" }
+coroutines-play    = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services",   version.ref = "coroutines" }
+coroutines-test    = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test",            version.ref = "coroutines" }
+
+# Navigation & Maps
+navigation-compose   = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+maps-compose         = { group = "com.google.maps.android", name = "maps-compose",   version.ref = "mapsCompose" }
+play-services-maps      = { group = "com.google.android.gms", name = "play-services-maps",      version.ref = "playServicesMaps" }
+play-services-location  = { group = "com.google.android.gms", name = "play-services-location",  version.ref = "playServicesLocation" }
+
+# Room (subido a 2.7.2)
+room-runtime  = { module = "androidx.room:room-runtime",  version.ref = "room" }
+room-ktx      = { module = "androidx.room:room-ktx",      version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-hilt-android = { module = "com.google.dagger:hilt-android", version = "2.51" }
-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version = "2.51" }
-androidx-paging-compose = {module= "androidx.paging:paging-compose", version="3.2.1" }
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "maps_compose" }
-play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "play_services_maps" }
+room-paging   = { module = "androidx.room:room-paging",   version.ref = "room" }
+room-testing  = { module = "androidx.room:room-testing",  version.ref = "room" }
 
+# Hilt
+hilt-android            = { module = "com.google.dagger:hilt-android",            version.ref = "hilt" }
+hilt-compiler           = { module = "com.google.dagger:hilt-android-compiler",   version.ref = "hilt" }
+hilt-testing            = { module = "com.google.dagger:hilt-android-testing",    version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose",     version.ref = "hiltNav" } # FIX: apuntar a 1.2.0
 
+# Paging
+paging-compose = { module = "androidx.paging:paging-compose", version = "3.2.1" }
 
+# Test libs
+junit4          = { group = "junit",             name = "junit",            version.ref = "junit4" }
+junit-androidx  = { group = "androidx.test.ext", name = "junit",            version.ref = "junitExt" }
+espresso-core   = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+runner          = { group = "androidx.test",     name = "runner",           version.ref = "runner" }
+mockito-core    = { group = "org.mockito",       name = "mockito-core",     version.ref = "mockito" }
+mockito-android = { group = "org.mockito",       name = "mockito-android",  version.ref = "mockito" }
+mockito-kotlin  = { group = "org.mockito.kotlin",name = "mockito-kotlin",   version.ref = "mockitoKotlin" }
+
+#######################
+#  Gradle plugins     #
+#######################
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version = "1.9.23" }
-
+android-library     = { id = "com.android.library",     version.ref = "agp" }
+kotlin-android      = { id = "org.jetbrains.kotlin.android",          version.ref = "kotlin" }
+kotlin-compose      = { id = "org.jetbrains.kotlin.plugin.compose",   version.ref = "kotlin" }
+hilt                = { id = "com.google.dagger.hilt.android",        version.ref = "hilt" }
+kotlin-kapt         = { id = "org.jetbrains.kotlin.kapt",             version.ref = "kotlin" } # FIX: usar misma versión que Kotlin
