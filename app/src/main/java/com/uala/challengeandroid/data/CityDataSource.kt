@@ -34,10 +34,8 @@ interface CityDao {
 
         @Query("SELECT * FROM cities ORDER BY name")
         fun getAll(): Flow<List<CityEntity>>
-
         @Query("SELECT * FROM cities WHERE name LIKE :query OR country LIKE :query ORDER BY name")
         fun search(query: String): Flow<List<CityEntity>>
-
         @Query("SELECT * FROM cities WHERE id = :id")
         suspend fun getById(id: Long): CityEntity?
         @Query("UPDATE cities SET isFavorite = :isFav WHERE id = :id")
